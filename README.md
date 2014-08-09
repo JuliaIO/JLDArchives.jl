@@ -9,3 +9,6 @@ At some point if it becomes difficult to maintain backwards compatibility, this 
 for converting old formats to more modern ones.
 (For example, by archiving old versions of the JLD format implementation, and then saving all the same
 variables using the modern format.)
+
+To test backwards compatility, simply say `Pkg.test("JLDArchives")` from julia,
+or run the `runtests.jl` script from inside the `test` folder.
