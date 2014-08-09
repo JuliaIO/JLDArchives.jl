@@ -122,71 +122,74 @@ function checkexpr(a::Expr, b::Expr)
     @assert i >= length(a.args) && j >= length(b.args)
 end
 
-fn = "v0.2.26.jld"
+for fn in ("v0.2.26.jld", "v0.2.28.jld")
+    for mmap = (true, false)
+        fidr = jldopen(fn, "r", mmaparrays=mmap)
+        @check fidr x
+        @check fidr A
+        @check fidr str
+        @check fidr stringsA
+        @check fidr stringsU
+        @check fidr empty_string
+        @check fidr empty_string_array
+        @check fidr empty_array_of_strings
+        @check fidr tf
+        @check fidr TF
+        @check fidr AB
+        @check fidr t
+        @check fidr c
+        @check fidr cint
+        @check fidr C
+        @check fidr emptyA
+        @check fidr emptyB
+        @check fidr ms
+        @check fidr msempty
+        @check fidr sym
+        @check fidr syms
+        @check fidr d
+        exr = read(fidr, "ex")   # line numbers are stripped, don't expect equality
+        checkexpr(ex, exr)
+        @check fidr T
+        @check fidr char
+        @check fidr unicode_char
+        @check fidr α
+        @check fidr β
+        @check fidr vv
+        @check fidr rng
+        @check fidr typevar
+        @check fidr typevar_lb
+        @check fidr typevar_ub
+        @check fidr typevar_lb_ub
 
-for mmap = (true, false)
-    fidr = jldopen(fn, "r", mmaparrays=mmap)
-    @check fidr x
-    @check fidr A
-    @check fidr str
-    @check fidr stringsA
-    @check fidr stringsU
-    @check fidr empty_string
-    @check fidr empty_string_array
-    @check fidr empty_array_of_strings
-    @check fidr tf
-    @check fidr TF
-    @check fidr AB
-    @check fidr t
-    @check fidr c
-    @check fidr cint
-    @check fidr C
-    @check fidr emptyA
-    @check fidr emptyB
-    @check fidr ms
-    @check fidr msempty
-    @check fidr sym
-    @check fidr syms
-    @check fidr d
-    exr = read(fidr, "ex")   # line numbers are stripped, don't expect equality
-    checkexpr(ex, exr)
-    @check fidr T
-    @check fidr char
-    @check fidr unicode_char
-    @check fidr α
-    @check fidr β
-    @check fidr vv
-    @check fidr rng
-    @check fidr typevar
-    @check fidr typevar_lb
-    @check fidr typevar_ub
-    @check fidr typevar_lb_ub
+        # Special cases for reading undefs
+        undef = read(fidr, "undef")
+        if !isa(undef, Array{Any, 1}) || length(undef) != 1 || isdefined(undef, 1)
+            error("For undef, read value does not agree with written value")
+        end
+        undefs = read(fidr, "undefs")
+        if !isa(undefs, Array{Any, 2}) || length(undefs) != 4 || any(map(i->isdefined(undefs, i), 1:4))
+            error("For undefs, read value does not agree with written value")
+        end
+        ms_undef = read(fidr, "ms_undef")
+        if !isa(ms_undef, MyStruct) || ms_undef.len != 0 || isdefined(ms_undef, :data)
+            error("For ms_undef, read value does not agree with written value")
+        end
 
-    # Special cases for reading undefs
-    undef = read(fidr, "undef")
-    if !isa(undef, Array{Any, 1}) || length(undef) != 1 || isdefined(undef, 1)
-        error("For undef, read value does not agree with written value")
-    end
-    undefs = read(fidr, "undefs")
-    if !isa(undefs, Array{Any, 2}) || length(undefs) != 4 || any(map(i->isdefined(undefs, i), 1:4))
-        error("For undefs, read value does not agree with written value")
-    end
-    ms_undef = read(fidr, "ms_undef")
-    if !isa(ms_undef, MyStruct) || ms_undef.len != 0 || isdefined(ms_undef, :data)
-        error("For ms_undef, read value does not agree with written value")
-    end
-    
-    @assert !in("objwithpointer", names(fidr))
-    @check fidr bt
-    @check fidr sa_asc
-    @check fidr sa_utf8
-    @check fidr subarray
-    @check fidr arr_empty_tuple
-    
-    x1 = read(fidr, "group1/x")
-    @assert x1 == {1}
-    x2 = read(fidr, "group2/x")
-    @assert x2 == {2}
+        @assert !in("objwithpointer", names(fidr))
+        @check fidr bt
+        @check fidr sa_asc
+        @check fidr sa_utf8
+        @check fidr subarray
+        @check fidr arr_empty_tuple
 
-    close(fidr)
+        x1 = read(fidr, "group1/x")
+        @assert x1 == {1}
+        x2 = read(fidr, "group2/x")
+        @assert x2 == {2}
+
+        # load but don't check
+        read(fidr, "cpus")
+
+        close(fidr)
+    end
 end
