@@ -183,9 +183,9 @@ for fn in ("v0.2.26.jld", "v0.2.28.jld")
         @check fidr arr_empty_tuple
 
         x1 = read(fidr, "group1/x")
-        @assert x1 == {1}
+        @assert x1 == Any[1]
         x2 = read(fidr, "group2/x")
-        @assert x2 == {2}
+        @assert x2 == Any[2]
 
         # load but don't check
         read(fidr, "cpus")
