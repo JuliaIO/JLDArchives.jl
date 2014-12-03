@@ -1,4 +1,5 @@
 using HDF5, JLD
+using Base.Test
 
 # Define variables of different types
 x = 3.7
@@ -179,7 +180,6 @@ for fn in ("v0.2.26.jld", "v0.2.28.jld")
         @check fidr bt
         @check fidr sa_asc
         @check fidr sa_utf8
-        @check fidr subarray
         @check fidr arr_empty_tuple
 
         x1 = read(fidr, "group1/x")
@@ -189,6 +189,11 @@ for fn in ("v0.2.26.jld", "v0.2.28.jld")
 
         # load but don't check
         read(fidr, "cpus")
+
+        # subarray (changed representation in julia 0.4)
+        subarray_safe = JLD.JLD00.readsafely(fidr, "subarray")
+        @test subarray_safe["indexes"] == (1:5,)
+        @test subarray_safe["parent"] == [1:5]
 
         close(fidr)
     end
