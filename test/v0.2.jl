@@ -125,7 +125,7 @@ end
 
 for fn in ("v0.2.26.jld", "v0.2.28.jld")
     for mmap = (true, false)
-        fidr = jldopen(fn, "r", mmaparrays=mmap)
+        fidr = jldopen(joinpath(splitdir(@__FILE__)[1], fn), "r", mmaparrays=mmap)
         @check fidr x
         @check fidr A
         @check fidr str
