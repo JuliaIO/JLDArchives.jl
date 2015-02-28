@@ -65,7 +65,7 @@ bt = reinterpret(MyBT, 55)
 sa_asc = [:a, :b]
 sa_utf8 = [:α, :β]
 # SubArray (to test tuple type params)
-subarray = sub([1:5], 1:5)
+subarray = sub([1:5;], 1:5)
 # Array of empty tuples (to test tuple type params)
 arr_empty_tuple = ()[]
 
@@ -193,7 +193,7 @@ for fn in ("v0.2.26.jld", "v0.2.28.jld")
         # subarray (changed representation in julia 0.4)
         subarray_safe = JLD.JLD00.readsafely(fidr, "subarray")
         @test subarray_safe["indexes"] == (1:5,)
-        @test subarray_safe["parent"] == [1:5]
+        @test subarray_safe["parent"] == [1:5;]
 
         close(fidr)
     end
