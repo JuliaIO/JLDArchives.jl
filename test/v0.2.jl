@@ -1,5 +1,4 @@
-using HDF5, JLD
-using Base.Test
+using HDF5, JLD, Base.Test, Compat
 
 # Define variables of different types
 x = 3.7
@@ -16,7 +15,7 @@ B = [-1.5 sqrt(2) NaN 6;
      0.0  Inf eps() -Inf]
 AB = Any[A, B]
 t = (3, "cat")
-c = float32(3)+float32(7)im
+@compat c = Float32(3)+Float32(7)im
 cint = 1+im  # issue 108
 C = reinterpret(Complex128, B, (4,))
 emptyA = zeros(0,2)
@@ -67,7 +66,7 @@ sa_utf8 = [:α, :β]
 # SubArray (to test tuple type params)
 subarray = sub([1:5;], 1:5)
 # Array of empty tuples (to test tuple type params)
-arr_empty_tuple = ()[]
+@compat arr_empty_tuple = Tuple{}[]
 
 iseq(x,y) = isequal(x,y)
 iseq(x::MyStruct, y::MyStruct) = (x.len == y.len && x.data == y.data)
