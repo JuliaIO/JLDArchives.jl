@@ -107,11 +107,11 @@ function checkexpr(a::Expr, b::Expr)
     i = 1
     j = 1
     while i <= length(a.args) && j <= length(b.args)
-        if isa(a.args[i], Expr) && a.args[i].head == :line
+        if (isa(a.args[i], Expr) && a.args[i].head == :line) || isa(a.args[i], LineNumberNode)
             i += 1
             continue
         end
-        if isa(b.args[j], Expr) && b.args[j].head == :line
+        if (isa(b.args[j], Expr) && b.args[j].head == :line) || isa(b.args[j], LineNumberNode)
             j += 1
             continue
         end
