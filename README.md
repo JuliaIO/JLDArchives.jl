@@ -1,6 +1,6 @@
 # JLDArchives
 
-[JLD](https://github.com/timholy/HDF5.jl) is an HDF5-based file format for storing data for the Julia language.
+[JLD](https://github.com/JuliaLang/HDF5.jl) is an HDF5-based file format for storing data for the Julia language.
 
 This is a repository of old *.jld files, useful for ensuring that we preserve backwards compatibility.
 
