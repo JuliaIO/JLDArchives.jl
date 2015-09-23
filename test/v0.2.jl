@@ -40,7 +40,7 @@ ex = quote
         x+1
     end
 end
-T = Uint8
+T = UInt8
 char = 'x'
 unicode_char = '\U10ffff'
 α = 22
