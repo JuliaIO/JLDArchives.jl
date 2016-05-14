@@ -1,17 +1,18 @@
 using HDF5, JLD, Base.Test, Compat
+import Compat.String
 
 # Define variables of different types
 x = 3.7
 A = reshape(collect(1:15), 3, 5)
 Aarray = Vector{Float64}[[1.2,1.3],[2.2,2.3,2.4]]
 str = "Hello"
-stringsA = ASCIIString["It", "was", "a", "dark", "and", "stormy", "night"]
-stringsU = UTF8String["It", "was", "a", "dark", "and", "stormy", "night"]
+stringsA = Compat.ASCIIString["It", "was", "a", "dark", "and", "stormy", "night"]
+stringsU = Compat.UTF8String["It", "was", "a", "dark", "and", "stormy", "night"]
 strings16 = convert(Array{UTF16String}, stringsA)
 strings16_2d = reshape(strings16[1:6], (2,3))
 empty_string = ""
-empty_string_array = ASCIIString[]
-empty_array_of_strings = ASCIIString[""]
+empty_string_array = Compat.ASCIIString[]
+empty_array_of_strings = Compat.ASCIIString[""]
 tf = true
 TF = A .> 10
 B = [-1.5 sqrt(2) NaN 6;
@@ -129,7 +130,7 @@ end
 nonpointerfree_immutable_3 = MyImmutable2()
 # Immutable with a non-concrete datatype (issue #143)
 immutable Vague
-    name::ByteString
+    name::Compat.String
 end
 vague = Vague("foo")
 # Immutable with a union of BitsTypes

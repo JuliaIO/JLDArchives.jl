@@ -1,13 +1,15 @@
 using HDF5, JLD, Base.Test, Compat
+import Compat.String
 
 # Define variables of different types
 x = 3.7
 A = reshape(collect(1:15), 3, 5)
 str = "Hello"
-stringsU = UTF8String["It", "was", "a", "dark", "and", "stormy", "night"]
+stringsA = Compat.ASCIIString["It", "was", "a", "dark", "and", "stormy", "night"]
+stringsU = Compat.UTF8String["It", "was", "a", "dark", "and", "stormy", "night"]
 empty_string = ""
-empty_string_array = ASCIIString[]
-empty_array_of_strings = ASCIIString[""]
+empty_string_array = Compat.ASCIIString[]
+empty_array_of_strings = Compat.ASCIIString[""]
 tf = true
 TF = A .> 10
 B = [-1.5 sqrt(2) NaN 6;
