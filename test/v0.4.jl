@@ -1,4 +1,4 @@
-using HDF5, JLD, Base.Test, Compat
+using HDF5, JLD, Base.Test, Compat, LegacyStrings
 import Compat.String
 
 # Define variables of different types
