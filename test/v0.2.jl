@@ -60,7 +60,7 @@ rng = 1:5
 objwithpointer = r"julia"
 # Custom BitsType (#99)
 bitstype 64 MyBT
-bt = reinterpret(MyBT, 55)
+bt = reinterpret(MyBT, Int64(55))
 # Symbol arrays (#100)
 sa_asc = [:a, :b]
 sa_utf8 = [:α, :β]
