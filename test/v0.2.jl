@@ -1,5 +1,5 @@
 using HDF5, JLD, Base.Test, Compat
-import Compat.String
+using Compat: String, view
 
 # Define variables of different types
 x = 3.7
@@ -16,7 +16,7 @@ B = [-1.5 sqrt(2) NaN 6;
      0.0  Inf eps() -Inf]
 AB = Any[A, B]
 t = (3, "cat")
-@compat c = Float32(3)+Float32(7)im
+c = Float32(3)+Float32(7)im
 cint = 1+im  # issue 108
 C = reinterpret(Complex128, B, (4,))
 emptyA = zeros(0,2)
@@ -51,8 +51,8 @@ typevar = Array{Int}[[1]]
 typevar_lb = Vector{TypeVar(:U, Integer)}[[1]]
 typevar_ub = Vector{TypeVar(:U, Int, Any)}[[1]]
 typevar_lb_ub = Vector{TypeVar(:U, Int, Real)}[[1]]
-undef = cell(1)
-undefs = cell(2, 2)
+undef = Array{Any}(1)
+undefs = Array{Any}(2, 2)
 ms_undef = MyStruct(0)
 # Immutable type:
 rng = 1:5
@@ -60,14 +60,14 @@ rng = 1:5
 objwithpointer = r"julia"
 # Custom BitsType (#99)
 bitstype 64 MyBT
-bt = reinterpret(MyBT, 55)
+bt = reinterpret(MyBT, Int64(55))
 # Symbol arrays (#100)
 sa_asc = [:a, :b]
 sa_utf8 = [:α, :β]
 # SubArray (to test tuple type params)
-subarray = sub([1:5;], 1:5)
+subarray = view([1:5;], 1:5)
 # Array of empty tuples (to test tuple type params)
-@compat arr_empty_tuple = Tuple{}[]
+arr_empty_tuple = Tuple{}[]
 
 iseq(x,y) = isequal(x,y)
 iseq(x::MyStruct, y::MyStruct) = (x.len == y.len && x.data == y.data)
@@ -125,7 +125,7 @@ end
 
 for fn in ("v0.2.26.jld", "v0.2.28.jld")
     for mmap = (true, false)
-        fidr = jldopen(joinpath(splitdir(@__FILE__)[1], fn), "r", mmaparrays=mmap)
+        fidr = jldopen(joinpath(splitdir(@__FILE__)[1], fn), "r"; mmaparrays=mmap)
         @check fidr x
         @check fidr A
         @check fidr str
