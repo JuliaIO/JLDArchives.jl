@@ -1,5 +1,5 @@
 using HDF5, JLD, Base.Test, Compat, LegacyStrings
-using Compat.String
+using Compat: String, view
 
 # Define variables of different types
 x = 3.7
@@ -54,8 +54,8 @@ typevar = Array{Int}[[1]]
 typevar_lb = Vector{TypeVar(:U, Integer)}[[1]]
 typevar_ub = Vector{TypeVar(:U, Int, Any)}[[1]]
 typevar_lb_ub = Vector{TypeVar(:U, Int, Real)}[[1]]
-undef = cell(1)
-undefs = cell(2, 2)
+undef = Array{Any}(1)
+undefs = Array{Any}(2, 2)
 ms_undef = MyStruct(0)
 # Immutable type:
 rng = 1:5
@@ -65,13 +65,13 @@ immutable ObjWithPointer
 end
 objwithpointer = ObjWithPointer(0)
 # Custom BitsType (#99)
-bitstype 64 MyBT
+@compat primitive type MyBT 64 end
 bt = reinterpret(MyBT, Int64(55))
 # Symbol arrays (#100)
 sa_asc = [:a, :b]
 sa_utf8 = [:α, :β]
 # SubArray (to test tuple type params)
-subarray = sub([1:5;], 1:5)
+subarray = view([1:5;], 1:5)
 # Array of empty tuples (to test tuple type params)
 arr_empty_tuple = Tuple{}[]
 immutable EmptyImmutable end
@@ -106,7 +106,7 @@ emptyiiotherfield = EmptyIIOtherField(EmptyImmutable(), 5.0)
 type MyUnicodeStruct☺{τ}
     α::τ
     ∂ₓα::τ
-    MyUnicodeStruct☺(α::τ, ∂ₓα::τ) = new(α, ∂ₓα)
+    @compat (::Type{MyUnicodeStruct☺{τ}}){τ}(α::τ, ∂ₓα::τ) = new{τ}(α, ∂ₓα)
 end
 unicodestruct☺ = MyUnicodeStruct☺{Float64}(1.0, -1.0)
 # Arrays of matrices (#131)
@@ -169,9 +169,9 @@ end
 padding_test = PaddingTest[PaddingTest(i, i) for i = 1:8]
 # Empty arrays of various types and sizes
 empty_arr_1 = Int[]
-empty_arr_2 = Array(Int, 56, 0)
+empty_arr_2 = Array{Int}(56, 0)
 empty_arr_3 = Any[]
-empty_arr_4 = cell(0, 97)
+empty_arr_4 = Array{Any}(0, 97)
 # Moderately big dataset (which will be mmapped)
 bigdata = [1:10000;]
 # BigFloats and BigInts
@@ -179,7 +179,7 @@ bigints = big(3).^(1:100)
 bigfloats = big(3.2).^(1:100)
 # None
 none = Union{}
-nonearr = Array(Union{}, 5)
+nonearr = Array{Union{}}(5)
 # nothing/Void
 scalar_nothing = nothing
 vector_nothing = Union{Int,Void}[1,nothing]
@@ -309,11 +309,11 @@ for fname in ("v0.4.13-julia-0.3.jld", "v0.4.14-julia-0.4.0-dev+4483.jld")
 
     # Special cases for reading undefs
     undef = read(fidr, "undef")
-    if !isa(undef, Array{Any, 1}) || length(undef) != 1 || isdefined(undef, 1)
+    if !isa(undef, Array{Any, 1}) || length(undef) != 1 || isassigned(undef, 1)
         error("For undef, read value does not agree with written value")
     end
     undefs = read(fidr, "undefs")
-    if !isa(undefs, Array{Any, 2}) || length(undefs) != 4 || any(map(i->isdefined(undefs, i), 1:4))
+    if !isa(undefs, Array{Any, 2}) || length(undefs) != 4 || any(map(i->isassigned(undefs, i), 1:4))
         error("For undefs, read value does not agree with written value")
     end
     ms_undef = read(fidr, "ms_undef")

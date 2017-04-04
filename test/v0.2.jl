@@ -59,7 +59,7 @@ rng = 1:5
 # Type with a pointer field (#84)
 objwithpointer = r"julia"
 # Custom BitsType (#99)
-bitstype 64 MyBT
+@compat primitive type MyBT 64 end
 bt = reinterpret(MyBT, Int64(55))
 # Symbol arrays (#100)
 sa_asc = [:a, :b]
@@ -164,11 +164,11 @@ for fn in ("v0.2.26.jld", "v0.2.28.jld")
 
         # Special cases for reading undefs
         undef = read(fidr, "undef")
-        if !isa(undef, Array{Any, 1}) || length(undef) != 1 || isdefined(undef, 1)
+        if !isa(undef, Array{Any, 1}) || length(undef) != 1 || isassigned(undef, 1)
             error("For undef, read value does not agree with written value")
         end
         undefs = read(fidr, "undefs")
-        if !isa(undefs, Array{Any, 2}) || length(undefs) != 4 || any(map(i->isdefined(undefs, i), 1:4))
+        if !isa(undefs, Array{Any, 2}) || length(undefs) != 4 || any(map(i->isassigned(undefs, i), 1:4))
             error("For undefs, read value does not agree with written value")
         end
         ms_undef = read(fidr, "ms_undef")
