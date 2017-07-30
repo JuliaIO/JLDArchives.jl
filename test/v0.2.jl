@@ -1,15 +1,14 @@
-using HDF5, JLD, Base.Test, Compat
-using Compat: String, view
+using HDF5, JLD, Base.Test
 
 # Define variables of different types
 x = 3.7
 A = reshape(collect(1:15), 3, 5)
 str = "Hello"
-stringsA = Compat.ASCIIString["It", "was", "a", "dark", "and", "stormy", "night"]
-stringsU = Compat.UTF8String["It", "was", "a", "dark", "and", "stormy", "night"]
+stringsA = String["It", "was", "a", "dark", "and", "stormy", "night"]
+stringsU = String["It", "was", "a", "dark", "and", "stormy", "night"]
 empty_string = ""
-empty_string_array = Compat.ASCIIString[]
-empty_array_of_strings = Compat.ASCIIString[""]
+empty_string_array = String[]
+empty_array_of_strings = String[""]
 tf = true
 TF = A .> 10
 B = [-1.5 sqrt(2) NaN 6;
@@ -48,17 +47,9 @@ unicode_char = '\U10ffff'
 β = Any[[1, 2], [3, 4]]  # issue #93
 vv = Vector{Int}[[1,2,3]] # issue #123
 typevar = Array{Int}[[1]]
-if JLD.TYPESYSTEM_06
-    include_string(@__MODULE__, """
-    typevar_lb = Vector{<:Integer}[[1]]
-    typevar_ub = (Vector{U} where U>:Int)[[1]]
-    typevar_lb_ub = (Vector{U} where Int<:U<:Real)[[1]]
-    """)
-else
-    typevar_lb = Vector{TypeVar(:U, Integer)}[[1]]
-    typevar_ub = Vector{TypeVar(:U, Int, Any)}[[1]]
-    typevar_lb_ub = Vector{TypeVar(:U, Int, Real)}[[1]]
-end
+typevar_lb = Vector{<:Integer}[[1]]
+typevar_ub = (Vector{U} where U>:Int)[[1]]
+typevar_lb_ub = (Vector{U} where Int<:U<:Real)[[1]]
 undef = Array{Any}(1)
 undefs = Array{Any}(2, 2)
 ms_undef = MyStruct(0)
@@ -67,7 +58,7 @@ rng = 1:5
 # Type with a pointer field (#84)
 objwithpointer = r"julia"
 # Custom BitsType (#99)
-@compat primitive type MyBT 64 end
+primitive type MyBT 64 end
 bt = reinterpret(MyBT, Int64(55))
 # Symbol arrays (#100)
 sa_asc = [:a, :b]

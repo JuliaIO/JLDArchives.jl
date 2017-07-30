@@ -1,18 +1,17 @@
-using HDF5, JLD, Base.Test, Compat, LegacyStrings
-using Compat: String, view
+using HDF5, JLD, Base.Test, LegacyStrings
 
 # Define variables of different types
 x = 3.7
 A = reshape(collect(1:15), 3, 5)
 Aarray = Vector{Float64}[[1.2,1.3],[2.2,2.3,2.4]]
 str = "Hello"
-stringsA = Compat.ASCIIString["It", "was", "a", "dark", "and", "stormy", "night"]
-stringsU = Compat.UTF8String["It", "was", "a", "dark", "and", "stormy", "night"]
+stringsA = String["It", "was", "a", "dark", "and", "stormy", "night"]
+stringsU = String["It", "was", "a", "dark", "and", "stormy", "night"]
 strings16 = convert(Array{UTF16String}, stringsA)
 strings16_2d = reshape(strings16[1:6], (2,3))
 empty_string = ""
-empty_string_array = Compat.ASCIIString[]
-empty_array_of_strings = Compat.ASCIIString[""]
+empty_string_array = String[]
+empty_array_of_strings = String[""]
 tf = true
 TF = A .> 10
 B = [-1.5 sqrt(2) NaN 6;
@@ -51,17 +50,9 @@ unicode_char = '\U10ffff'
 β = Any[[1, 2], [3, 4]]  # issue #93
 vv = Vector{Int}[[1,2,3]]  # issue #123
 typevar = Array{Int}[[1]]
-if JLD.TYPESYSTEM_06
-    include_string(@__MODULE__, """
-    typevar_lb = Vector{<:Integer}[[1]]
-    typevar_ub = (Vector{U} where U>:Int)[[1]]
-    typevar_lb_ub = (Vector{U} where Int<:U<:Real)[[1]]
-    """)
-else
-    typevar_lb = Vector{TypeVar(:U, Integer)}[[1]]
-    typevar_ub = Vector{TypeVar(:U, Int, Any)}[[1]]
-    typevar_lb_ub = Vector{TypeVar(:U, Int, Real)}[[1]]
-end
+typevar_lb = Vector{<:Integer}[[1]]
+typevar_ub = (Vector{U} where U>:Int)[[1]]
+typevar_lb_ub = (Vector{U} where Int<:U<:Real)[[1]]
 undef = Array{Any}(1)
 undefs = Array{Any}(2, 2)
 ms_undef = MyStruct(0)
@@ -73,7 +64,7 @@ immutable ObjWithPointer
 end
 objwithpointer = ObjWithPointer(0)
 # Custom BitsType (#99)
-@compat primitive type MyBT 64 end
+primitive type MyBT 64 end
 bt = reinterpret(MyBT, Int64(55))
 # Symbol arrays (#100)
 sa_asc = [:a, :b]
@@ -114,7 +105,7 @@ emptyiiotherfield = EmptyIIOtherField(EmptyImmutable(), 5.0)
 type MyUnicodeStruct☺{τ}
     α::τ
     ∂ₓα::τ
-    @compat (::Type{MyUnicodeStruct☺{τ}}){τ}(α::τ, ∂ₓα::τ) = new{τ}(α, ∂ₓα)
+    (::Type{MyUnicodeStruct☺{τ}}){τ}(α::τ, ∂ₓα::τ) = new{τ}(α, ∂ₓα)
 end
 unicodestruct☺ = MyUnicodeStruct☺{Float64}(1.0, -1.0)
 # Arrays of matrices (#131)
@@ -138,7 +129,7 @@ end
 nonpointerfree_immutable_3 = MyImmutable2()
 # Immutable with a non-concrete datatype (issue #143)
 immutable Vague
-    name::Compat.String
+    name::String
 end
 vague = Vague("foo")
 # Immutable with a union of BitsTypes
