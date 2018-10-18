@@ -301,19 +301,11 @@ for fname in ("v0.4.13-julia-0.3.jld", "v0.4.14-julia-0.4.0-dev+4483.jld")
     @check fidr sym
     @check fidr syms
     @check fidr d
-    # FIXME: the Expr type was changed in julia 0.7 (it no longer has the field "typ"
-    #        thus the check within read() fails with "stored type Core.Expr does not match currently loaded type"
-    # exr = read(fidr, "ex")   # line numbers are stripped, don't expect equality
-    # checkexpr(ex, exr)
+    exr = read(fidr, "ex")   # line numbers are stripped, don't expect equality
+    checkexpr(ex, exr)
     @check fidr T
-    # FIXME: the representation of Char has changed in julia 0.7, e.g.
-    #           julia-0.7> bitstring('x')
-    #           "01111000000000000000000000000000"
-    #           julia-0.6> bits('x')
-    #           "00000000000000000000000001111000"
-    #        thus the next lines fail to read back the correct characters
-    # @check fidr char
-    # @check fidr unicode_char
+    @check fidr char
+    @check fidr unicode_char
     @check fidr α
     @check fidr β
     @check fidr vv
@@ -360,7 +352,7 @@ for fname in ("v0.4.13-julia-0.3.jld", "v0.4.14-julia-0.4.0-dev+4483.jld")
     @check fidr nonpointerfree_immutable_3
     vaguer = read(fidr, "vague")
     @test typeof(vaguer) == typeof(vague) && vaguer.name == vague.name
-    # @check fidr bitsunion # FIXME: fails on 0.7 with message: "reference encountered in pointerfree immutable; this is a bug"
+    @check fidr bitsunion
     @check fidr typeunionfield
     @check fidr genericunionfield
 
