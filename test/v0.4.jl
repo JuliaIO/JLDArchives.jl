@@ -1,5 +1,4 @@
-using HDF5, JLD, Compat, Compat.Test, Compat.LinearAlgebra, LegacyStrings
-using Compat: @warn
+using HDF5, JLD, Test, LinearAlgebra
 
 # Define variables of different types
 x = 3.7
@@ -8,8 +7,6 @@ Aarray = Vector{Float64}[[1.2,1.3],[2.2,2.3,2.4]]
 str = "Hello"
 stringsA = String["It", "was", "a", "dark", "and", "stormy", "night"]
 stringsU = String["It", "was", "a", "dark", "and", "stormy", "night"]
-strings16 = convert(Array{UTF16String}, stringsA)
-strings16_2d = reshape(strings16[1:6], (2,3))
 empty_string = ""
 empty_string_array = String[]
 empty_array_of_strings = String[""]
@@ -282,8 +279,6 @@ for fname in ("v0.4.13-julia-0.3.jld", "v0.4.14-julia-0.4.0-dev+4483.jld")
     @check fidr str
     @check fidr stringsA
     @check fidr stringsU
-    @check fidr strings16
-    @check fidr strings16_2d
     @check fidr empty_string
     @check fidr empty_string_array
     @check fidr empty_array_of_strings

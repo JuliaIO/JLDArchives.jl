@@ -1,5 +1,4 @@
-using HDF5, JLD, Compat, Compat.Test
-using Compat: @warn
+using HDF5, JLD, Test
 
 # Define variables of different types
 x = 3.7
