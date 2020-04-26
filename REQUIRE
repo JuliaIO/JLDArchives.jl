@@ -1,5 +1,0 @@
-julia 0.6
-HDF5
-JLD 0.6.8
-Compat 0.48
-LegacyStrings # for julia-0.5
