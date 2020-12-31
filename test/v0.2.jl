@@ -176,7 +176,7 @@ for fn in ("v0.2.26.jld", "v0.2.28.jld")
             error("For ms_undef, read value does not agree with written value")
         end
 
-        @test !in("objwithpointer", names(fidr))
+        @test !in("objwithpointer", keys(fidr))
         @check fidr bt
         @check fidr sa_asc
         @check fidr sa_utf8
