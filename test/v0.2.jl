@@ -1,5 +1,9 @@
 using HDF5, JLD, Test
 
+if !isdefined(JLD, :keys)
+   names = keys  
+end
+
 # Define variables of different types
 x = 3.7
 A = reshape(collect(1:15), 3, 5)
