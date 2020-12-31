@@ -2,7 +2,7 @@ using HDF5, JLD, Test
 
 # names is deprecated to keys v0.12 JLD
 if !isdefined(JLD, :keys)
-   names = keys  
+   keys = names  
 end
 
 # Define variables of different types
